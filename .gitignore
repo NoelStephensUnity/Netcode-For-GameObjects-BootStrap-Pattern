@@ -1,0 +1,18 @@
+# IDE folders
+.vs
+.vscode
+.idea
+/Library
+/Temp
+/Logs
+/obj
+/Builds
+/UserSettings
+/ProjectSettings
+Assets/Resources
+Assets/Resources.meta
+
+*.csproj
+*.sln
+
+

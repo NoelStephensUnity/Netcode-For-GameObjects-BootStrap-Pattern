@@ -82,7 +82,7 @@ namespace NetcodeForGameObjects.SceneManagement.GoldenPath
                 if (!InvokeButtonActionsLocally)
                 {
                     var sendParms = new ClientRpcSendParams() { TargetClientIds = NetworkManager.ConnectedClientsIds.Where(c => c != NetworkManager.LocalClientId).ToArray() };
-                    if (sendParms.TargetClientIds.Length > 0)
+                    if (sendParms.TargetClientIds.Count() > 0)
                     {
                         OnButtonClickedClientRpc(new ClientRpcParams() { Send = sendParms });
                     }
