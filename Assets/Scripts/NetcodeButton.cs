@@ -9,6 +9,9 @@ namespace NetcodeForGameObjects.SceneManagement.GoldenPath
     [ExecuteInEditMode]
     public class NetcodeButton : NetworkBehaviour
     {
+        /// <summary>
+        /// See the <see cref="GenericButtonScript"/> for details on this
+        /// </summary>
 #if UNITY_EDITOR
         Text TextComponent;
         private void Update() { UpdateButtonName(); }

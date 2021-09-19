@@ -7,7 +7,6 @@ namespace NetcodeForGameObjects.SceneManagement.GoldenPath
     {
         private TextMesh m_ObjectLabel;
         private MeshRenderer m_Renderer;
-        private bool IsSpawned;
 
         private void SetNetCodeLabel(string label)
         {
@@ -43,23 +42,26 @@ namespace NetcodeForGameObjects.SceneManagement.GoldenPath
             SetVisible(false);
         }
 
+        /// <summary>
+        /// When we spawn we either set the label to the player id or NetworkObjectId
+        /// </summary>
         public override void OnNetworkSpawn()
         {
             SetNetCodeLabel(NetworkObject.IsPlayerObject ? $"Player-{NetworkObject.OwnerClientId}"
                 : m_ObjectLabel.text = $"NID-{NetworkObject.NetworkObjectId}");
-            IsSpawned = true;
         }
 
+        /// <summary>
+        /// When we despawn, we set the label to nothing
+        /// </summary>
         public override void OnNetworkDespawn()
         {
-            if (m_ObjectLabel == null)
-            {
-                m_ObjectLabel = GetComponent<TextMesh>();
-            }
             SetNetCodeLabel(string.Empty);
-            IsSpawned = false;
         }
 
+        /// <summary>
+        /// Add the ability to toggle the labels
+        /// </summary>
         private void Update()
         {
             if (IsSpawned)

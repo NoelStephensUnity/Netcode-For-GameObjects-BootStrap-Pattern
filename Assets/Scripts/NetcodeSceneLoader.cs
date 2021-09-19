@@ -7,6 +7,11 @@ using Unity.Netcode;
 
 namespace NetcodeForGameObjects.SceneManagement.GoldenPath
 {
+    /// <summary>
+    /// Handles all of the scene loading events for both
+    /// UnityEngine.SceneManagement.SceneManager
+    /// Unity.Netcode.NetworkSceneManager
+    /// </summary>
     public class NetcodeSceneLoader : MonoBehaviour
     {
         public List<SceneEntry> SceneEntryList = new List<SceneEntry>();
@@ -20,6 +25,9 @@ namespace NetcodeForGameObjects.SceneManagement.GoldenPath
         private bool ShouldLoadCurrentScene() { return SceneBeingProcessed.ProcessSceneState == SceneEntry.ProcessSceneStates.Loading; }
         private bool IsNetworkSessionActive() { return NetworkManager.Singleton != null && NetworkManager.Singleton.IsListening; }
         private bool IsListeningAndNotServer() { return IsNetworkSessionActive() && !NetworkManager.Singleton.IsServer; }
+
+        // specific to the NetworkSceneManager to determine if notification registration needs to be applied
+        private bool m_IsAlreadyRegistered;
 
         private void OnEnable()
         {
@@ -76,6 +84,10 @@ namespace NetcodeForGameObjects.SceneManagement.GoldenPath
             return SceneEntryList.Where(c => !c.IsSceneProcessed()).Count();
         }
 
+        /// <summary>
+        /// When active, this will continue to iterate over any SceneEntry that
+        /// needs to be processed (i.e. loaded or unloaded)
+        /// </summary>
         private IEnumerator LoadScenesCoroutine()
         {
             // Register for scene loading notifications
@@ -104,6 +116,10 @@ namespace NetcodeForGameObjects.SceneManagement.GoldenPath
             yield return null;
         }
 
+        /// <summary>
+        /// Determines how the SceneEntry will be processed and which scene management
+        /// class to use for processing the Scene associated with the SceneEntry
+        /// </summary>
         private void ProcessScene()
         {
             if (!IsNetworkSessionActive())
@@ -131,6 +147,10 @@ namespace NetcodeForGameObjects.SceneManagement.GoldenPath
             }
         }
 
+        /// <summary>
+        /// Adds or removes scene event notifications
+        /// </summary>
+        /// <param name="shouldAddEvent"></param>
         private void SetSceneLoadingNotifications(bool shouldAddEvent = true)
         {
             if (!IsNetworkSessionActive())
@@ -152,7 +172,7 @@ namespace NetcodeForGameObjects.SceneManagement.GoldenPath
             }
         }
 
-        private bool m_IsAlreadyRegistered;
+
         public void ReceiveSceneEventMessages(bool shouldAddEvent)
         {
             if(shouldAddEvent && !m_IsAlreadyRegistered)

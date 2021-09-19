@@ -16,11 +16,23 @@ namespace NetcodeForGameObjects.SceneManagement.GoldenPath
         [Tooltip("When set to true, this button will exit play mode or the application if running as stand alone build.")]
         public bool ExitApplication;
 
+        /// <summary>
+        /// This will automatically handle renaming the button text to the name of the button
+        /// </summary>
 #if UNITY_EDITOR
         Text TextComponent;
 
+
+        /// <summary>
+        /// Only invoked once per hierarchy update (i.e. you rename the button and the hierarchy updates)
+        /// </summary>
         private void Update() { UpdateButtonName(); }
+
+        /// <summary>
+        /// Assures the button name is applied when building a stand alone
+        /// </summary>
         private void OnValidate() { UpdateButtonName(); }
+
 
         private void UpdateButtonName()
         {
