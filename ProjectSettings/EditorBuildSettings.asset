@@ -4,5 +4,23 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/BootStrap.unity
+    guid: d4a50c15ae1f40b4b8e1ca99dcf1b3e5
+  - enabled: 1
+    path: Assets/Scenes/ActiveSession.unity
+    guid: 3abd78c3960fea94a90ed58f25073db2
+  - enabled: 1
+    path: Assets/Scenes/DefaultActiveScene.unity
+    guid: 822e9c9ac719ecb44a0300ffea3349b1
+  - enabled: 1
+    path: Assets/Scenes/HeadsUpDisplay.unity
+    guid: c718b6f1d90e5564ab8dd60d1d115173
+  - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: 788b470b570ff5a419af6e9a03122e58
+  - enabled: 1
+    path: Assets/Scenes/SessionMenu.unity
+    guid: e0dc9508eb8b78941b1d37795c07d5b7
   m_configObjects: {}
