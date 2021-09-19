@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f5e67eab91a6bb4da2379c6ad9d4586, type: 3}
+  m_Name: HeadsUpDisplay
+  m_EditorClassIdentifier: 
+  SceneAssetToLoad: {fileID: 102900000, guid: c718b6f1d90e5564ab8dd60d1d115173, type: 3}
+  LoadSceneWhen: 1
+  ServerSynchronizedOnly: 1
+  OnLoadedTriggerEvents:
+    m_PersistentCalls:
+      m_Calls: []
+  ShutdownNetworkManagerOnUnload: 0
+  OnUnloadedTriggerEvents:
+    m_PersistentCalls:
+      m_Calls: []
+  SceneNameToLoad: HeadsUpDisplay
