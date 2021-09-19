@@ -8,7 +8,8 @@
 /obj
 /Builds
 /UserSettings
-/ProjectSettings
+/ProjectSettings/*
+!/ProjectSettings/EditorBuildSettings.*
 Assets/Resources
 Assets/Resources.meta
 
