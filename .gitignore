@@ -12,8 +12,8 @@
 !/ProjectSettings/EditorBuildSettings.*
 Assets/Resources
 Assets/Resources.meta
-
 *.csproj
 *.sln
+!Packages/manifest.json
 
 
