@@ -172,7 +172,6 @@ namespace NetcodeForGameObjects.SceneManagement.GoldenPath
             }
         }
 
-
         public void ReceiveSceneEventMessages(bool shouldAddEvent)
         {
             if(shouldAddEvent && !m_IsAlreadyRegistered)
