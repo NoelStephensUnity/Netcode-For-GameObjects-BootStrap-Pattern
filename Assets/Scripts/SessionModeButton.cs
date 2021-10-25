@@ -14,7 +14,7 @@ namespace NetcodeForGameObjects.SceneManagement.GoldenPath
             Server,
             None
         }
-        public delegate SocketTasks StartSessionModeDelegateHandler();
+        public delegate bool StartSessionModeDelegateHandler();
         [Tooltip("Will start a specific session mode or if set to None will act like a normal button.")]
         public SessionModes SessionMode;
 

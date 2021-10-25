@@ -226,7 +226,7 @@ namespace NetcodeForGameObjects.SceneManagement.GoldenPath
 
         private void SceneManager_OnSceneEvent(SceneEvent sceneEvent)
         {
-            if (sceneEvent.SceneEventType == SceneEventData.SceneEventTypes.C2S_LoadComplete || sceneEvent.SceneEventType == SceneEventData.SceneEventTypes.C2S_UnloadComplete)
+            if (sceneEvent.SceneEventType == SceneEventType.LoadComplete || sceneEvent.SceneEventType == SceneEventType.UnloadComplete)
             {
                 if (sceneEvent.ClientId == NetworkManager.Singleton.LocalClientId)
                 {
@@ -235,12 +235,12 @@ namespace NetcodeForGameObjects.SceneManagement.GoldenPath
                     if (sceneEvent.ClientId == NetworkManager.Singleton.LocalClientId
                         && sceneEvent.SceneName == sceneToCheck.SceneNameToLoad)
                     {
-                        if (sceneEvent.SceneEventType == SceneEventData.SceneEventTypes.C2S_LoadComplete)
+                        if (sceneEvent.SceneEventType == SceneEventType.LoadComplete)
                         {
                             Debug.Log($"Scene Event {sceneEvent.SceneEventType} for scene {sceneEvent.SceneName} processing for clientId {sceneEvent.ClientId}.");
                             sceneToCheck.UpdateSceneState(sceneEvent.Scene);
                         }
-                        else if (sceneEvent.SceneEventType == SceneEventData.SceneEventTypes.C2S_UnloadComplete)
+                        else if (sceneEvent.SceneEventType == SceneEventType.UnloadComplete)
                         {
                             Debug.Log($"Scene Event {sceneEvent.SceneEventType} for scene {sceneEvent.SceneName} processing for clientId {sceneEvent.ClientId}.");
                             sceneToCheck.UpdateSceneUnloaded();
