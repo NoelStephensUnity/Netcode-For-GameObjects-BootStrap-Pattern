@@ -72,36 +72,37 @@ A "SceneEntry" is derived from `ScriptableObject` that provides you with the abi
 
 To better understand the relationship between `SceneEntry` components and a `NetcodeSceneLoader` component, the below screenshot shows you the DefaultActiveScene's contents:<br/>
 ![image](https://user-images.githubusercontent.com/73188597/180101496-c14ea870-cdc2-412c-82b5-3a08e0b6ae9a.png)<br/>
-If you look at the SceneLoader object inspector view above, you will see that within the SceneEntry list is an actual reference to the DefaultActiveScene's `SceneEntry`, and then there are 4 more `SceneEntry` references in that list.  If you were to look at any one of the other 4 `SceneEntry`s, you would see that they are all set to "Load (the) Scene When" the `NetcodeSceneLoader` is started.  Below is a screenshot of the MainMenu `SceneEntry`:<br/>
+If you look at the SceneLoader object inspector view above, you will see that within the SceneEntry list is an actual reference to the DefaultActiveScene's `SceneEntry`, and then there are 4 more `SceneEntry` references in that list.  If you were to look at any one of the other 4 `SceneEntry` assets in the inspector view, you would see that they are all set to "Load (the) Scene When" the `NetcodeSceneLoader.Start` method is invoked. (this property name and associated enum types will most likely be changed when I come up with better names for them). Below is a screenshot of the MainMenu `SceneEntry`:<br/>
 ![image](https://user-images.githubusercontent.com/73188597/180101853-595bfbe7-d9b3-4144-bc51-f3a9bdeea7b7.png)<br/>
 
 You might feel confused at this point, but the following "logical flow" might help clear things up:
 1. The BootStrap scene is loaded which, in turn, loads the DefaultActiveScene.
 2. When the DefaultActive scene is loaded, the SceneLoader object is instantiated and the `NetcodeSceneLoader.Start` method is invoked.
-3. `NetcodeSceneLoader` parses through its assigned SceneEntries, skips over the DefaultActiveScene (it was already loaded which is the same as being loaded by a "trigger" event) and then it will load all of the SceneEntries configured to load at this very momenet (i.e. when the associated `NetcodeSceneLoader.Start` method is invoked).
+3. `NetcodeSceneLoader` parses through its assigned SceneEntries, skips over the DefaultActiveScene (it was already loaded which is the same as being loaded by a "trigger" event), and then it will load all of the SceneEntries configured to load at "Start"(i.e. when the associated `NetcodeSceneLoader.Start` method is invoked).
 
-At this point there is one more concept to understand about a `SceneEntry`, which we will look at the SessionMenu `SceneEntry` for this.  The SessionMenu is the menu interface that provides you with the option to start a server, host, or client.  When a scene is loaded additively, all of the GameObjects instantiated will typically be immediately "visible" unless you have some form of script to disable them during the `Start` method (or the like).  With a `SceneEntry` you have an additional handy method you can invoke to "show or hide" all GameObjects instantiated when a scene is loaded.  This is the `SceneEntry.EnableSceneObjects` method.
+At this point there is one more concept to understand about a `SceneEntry`, which we will look at the SessionMenu `SceneEntry` for this.  The SessionMenu is the menu interface that provides you with the option to start a server, host, or client.  When a scene is loaded additively, all of the GameObjects instantiated will typically be immediately "visible" unless you have some form of script to disable them during the `Start` method (or the like).  With a `SceneEntry` you have an additional handy method you can invoke to "show or hide" all GameObjects instantiated when the scene is loaded (i.e. in-scene placed NetworkObjects).  This is accomplished via the `SceneEntry.EnableSceneObjects` method.<br/>
 ![image](https://user-images.githubusercontent.com/73188597/180102994-1c6d26e1-c2a6-426e-a8a2-cc921da2d1e6.png)<br/>
 Looking at the inspector view of the SessionMenu `SceneEntry`, we can see that the "On Loaded Trigger" `UnityEvent` has a single entry that will invoke the `SceneEntry.EnableSceneObjects` method and pass a "false" to that method (checkbox un-checked) which will disable all `GameObjects` instantiate when the SessionMenu is loaded.  
 
-The idea behind this is that we are "pre-loading" certain scenes that we know we will use at some point in the future but we don't want anything within the loaded scenes to be visible or to consume any processing cycles once the scene is loaded.  If you refer back to the MainMenu `SceneEntry` above, you will see that it has no `On Loaded Trigger Events` which means the main menu is visible by default. Let's walk through the loading process:
+The idea behind this is that we are "pre-loading" certain scenes that we know we will use at some point in the "near" future but we don't want anything within the loaded scenes to be visible or to consume any processing cycles until we are "ready".  If you refer back to the MainMenu `SceneEntry` above, you will see that it has no `On Loaded Trigger Events` which means the main menu will be visible by default. Let's walk through the loading process once more with a little more detail:<br/>
 
 - The BootStrap scene is the first scene in the Scenes in Build list within the Build Settings and so it will load by default when a runtime build first starts
   - There is additional code that automatically loads the `BootStrap` scene when you enter into play mode as well
-    - When in the editor, it will also automatically progress you to whatever scene you have opened when you enter into play mode.
-- The Bootstrap scene then loads the DefaultActiveScene (via `SceneManager`)
+    - When in the editor, it will also automatically progress you to whatever scene you have opened when you entered into play mode.
+- The Bootstrap scene then loads the DefaultActiveScene (via `SceneManager`) which is also treated like it was "triggered" to be loaded. (special case here)
   - Upon the DefaultActiveScene being loaded, the SceneLoader proceeds to load the rest of the SceneEntries assigned to it.
-  - If you click the "New Session button" then the MainMenu scene has all of its `GameObjects` disabled and the SessionMenu has all of its `GameObjects` enabled:
+    - Unless the `SceneEntry` is set to load when triggered, under this scenario it won't be loaded, but it still is "registered/associated" with the `NetcodeSceneLoader` component attached to the SceneLoader `GameObject`.
+  - If you click the "New Session" button then the MainMenu scene has all of its `GameObjects` disabled and the SessionMenu has all of its `GameObjects` enabled:<br/>
 ![image](https://user-images.githubusercontent.com/73188597/180104220-2a85d4cf-73f3-4170-870d-2b290ce1a90f.png)<br/>
 
-Looking at the above screenshot of the `MainMenu` scene's `New Session` button, we can see the button's "On Click" actions invoke the:
+Looking at the above screenshot of the `MainMenu` scene's `New Session` button, we can see the button's "On Click" actions list contains two "actions" that will invoke the:
 - MainMenu's `SceneEntry.EnableSceneObjects` passing false (i.e. disables them)
 - SessionMenu's `SceneEntry.EnableSceneObjects` passing true (i.e. enables them)
 
 And with that...we switched between "scenes" without having to load a scene when the button is clicked or unload a scene if we want to bring another "scene into view".
-This is one, of several, benefits that come with using a Bootstrap usage pattern (and this template).
+This is one, of several, benefits that comes with using a Bootstrap usage pattern (and this project template). You can even "pre-design" your scene flows without having to have all content populated within the scenes, and as you add content to scenes it is relatively easy to determine "does this scene need to have a network session (i.e. be synchronized by the server) or not?" and it simplifies the loading and unloading of scenes to the point where you don't even have to write any code to do this!
 
-_(More To Come As I Have Time)_
+_(More To Come As Time Permits)_
 
 
 
