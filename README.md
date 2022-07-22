@@ -72,7 +72,7 @@ A "SceneEntry" is derived from `ScriptableObject` that provides you with the abi
 
 To better understand the relationship between `SceneEntry` components and a `NetcodeSceneLoader` component, the below screenshot shows you the DefaultActiveScene's contents:<br/>
 ![image](https://user-images.githubusercontent.com/73188597/180101496-c14ea870-cdc2-412c-82b5-3a08e0b6ae9a.png)<br/>
-If you look at the SceneLoader object inspector view above, you will see that within the SceneEntry list is an actual reference to the DefaultActiveScene's `SceneEntry`, and then there are 4 more `SceneEntry` references in that list.  If you were to look at any one of the `SceneEntry`s, you would see that they are all set  "Load (the) Scene When" of type "Start" which means when then `NetcodeSceneLoader.Start` method the `SceneEntry` is associated with is invoked.  Below is a screenshot of the MainMenu `SceneEntry`:
+If you look at the SceneLoader object inspector view above, you will see that within the SceneEntry list is an actual reference to the DefaultActiveScene's `SceneEntry`, and then there are 4 more `SceneEntry` references in that list.  If you were to look at any one of the other 4 `SceneEntry`s, you would see that they are all set to "Load (the) Scene When" the `NetcodeSceneLoader` is started.  Below is a screenshot of the MainMenu `SceneEntry`:<br/>
 ![image](https://user-images.githubusercontent.com/73188597/180101853-595bfbe7-d9b3-4144-bc51-f3a9bdeea7b7.png)<br/>
 
 You might feel confused at this point, but the following "logical flow" might help clear things up:
