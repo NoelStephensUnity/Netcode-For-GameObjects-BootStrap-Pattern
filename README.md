@@ -66,7 +66,7 @@ A "SceneEntry" is derived from `ScriptableObject` that provides you with the abi
 
 - Scene Asset To Load: This is the scene that is associated with the SceneEntry and will be loaded if the SceneEntry is being "loaded".
 - Load Scene When: This defines "when the scene is loaded" and there are two ways this is handled.
-  - Triggered: The scene will be loaded via the SceneEntry.SceneLoadTriggered method.
+  - Triggered: The scene will be loaded via the `SceneEntry.SceneLoadTriggered` method.
     - Typically, this is invoked via a button or some other component with an associated UnityEvent that could be "triggered" by a script.
   - Start: As stated before, a SceneEntry must be associatd with a `NetcodeSceneLoader` that typically contains at least one "triggered" SceneEntry and then one or more SceneEntries that load when the `NetcodeSceneLoader` invokes its `NetcodeSceneLoader.Start` method.
 
