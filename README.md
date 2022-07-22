@@ -55,7 +55,7 @@ In the above screenshot you will notice that almost all of the scenes have a `Sc
 
 ### Bootstrap Scene
 ![image](https://user-images.githubusercontent.com/73188597/180095817-725f06e2-9757-479a-bdbc-f8932b572bc9.png)<br/>
-The BootStrap scene is fairly straight forward.  It contains the `NetworkManager` and a "BootStrapSceneLoad" object that defines the resolution (or any other property specific to your project) as well as the first scene to be loaded additively.  The default setting for the template is to load the "DefaultActiveScene" `SceneEntry` `ScriptableObject`.
+The BootStrap scene is fairly straight forward.  It contains the `NetworkManager` and a "BootStrapSceneLoad" object that defines the resolution (or any other property specific to your project that you might add to it) as well as the first scene to be loaded additively.  The default setting for the template is to load the "DefaultActiveScene" `SceneEntry` `ScriptableObject`.
 
 ### Default Active Scene
 ![image](https://user-images.githubusercontent.com/73188597/180097206-38d61393-e3d5-4c86-8fca-1e3862a37930.png)<br/>
