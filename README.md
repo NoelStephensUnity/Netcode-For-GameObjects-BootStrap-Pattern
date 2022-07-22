@@ -46,7 +46,7 @@ Additionally, if you look at the top right corner you will see an "X" button.  W
 ## Scenes and SceneEntries
 Part of this Bootstrap Pattern has a heavy focus on:
 - How scenes are loaded and "associating" other scenes with a "primary scene" being loaded.
-- The use of UnityEvents to trigger other component methods when a scene is loaded, unloaded, before it is unloaded, etc.
+- The use of `UnityEvents` to trigger other component methods when a scene is loaded, unloaded, before it is unloaded, etc.
 - Whether the scene being loaded requires a network session to be loaded or not (i.e. via `NetworkSceneManager`).
   - For a server or host, this means starting a network session and listening for connecting clients.
   - For a client, this means connecting to an already existing network session<br/>
