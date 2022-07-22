@@ -16,7 +16,7 @@ The "Bootstrap Usage Pattern" involves having one (1) scene, typically set to in
 There are several additional features in this implementation that provides you with a "good starting point" without having to completely start from scratch.  If you are looking for a project that you can clone/download, build, run, and be able to start a network session without having to build your own UI, handle starting up and shutting down the NetworkManager, and to have a more WYSIWYG way of loading scenes...then this might be exactly what you are looking for!
 
 ### NOTE ON PROJECT STATE:
-As time permits, I will be updating this project with additional documentation, improving the existing code base, and in the "near future" I will be adding additional commomnly used/create generic netcode "aware" components to help accelerate you into the world of Netcode for GameObjects!
+As time permits, I will be updating this project with additional documentation, improving the existing code base, and in the "near future" I will be adding additional commonly used/create generic netcode "aware" components to help accelerate you into the world of Netcode for GameObjects!
 (please be patient)  
 :)
 
