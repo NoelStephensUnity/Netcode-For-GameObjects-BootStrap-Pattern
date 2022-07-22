@@ -91,7 +91,7 @@ The idea behind this is that we are "pre-loading" certain scenes that we know we
     - When in the editor, it will also automatically progress you to whatever scene you have opened when you entered into play mode.
 - The Bootstrap scene then loads the DefaultActiveScene (via `SceneManager`) which is also treated like it was "triggered" to be loaded. (special case here)
   - Upon the DefaultActiveScene being loaded, the SceneLoader proceeds to load the rest of the SceneEntries assigned to it.
-    - Unless the `SceneEntry` is set to load when triggered, under this scenario it won't be loaded, but it still is "registered/associated" with the `NetcodeSceneLoader` component attached to the SceneLoader `GameObject`.
+    - Unless the `SceneEntry` is set to load when triggered. Under this scenario it won't be loaded, but it still will be "registered/associated" with the `NetcodeSceneLoader` component attached to the SceneLoader `GameObject`.
   - If you click the "New Session" button then the MainMenu scene has all of its `GameObjects` disabled and the SessionMenu has all of its `GameObjects` enabled:<br/>
 ![image](https://user-images.githubusercontent.com/73188597/180104220-2a85d4cf-73f3-4170-870d-2b290ce1a90f.png)<br/>
 
