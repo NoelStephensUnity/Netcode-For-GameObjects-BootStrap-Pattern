@@ -1,4 +1,4 @@
-# A Netcode For GameObjects BootStrap Usage Pattern (Bootstrap Pattern)
+# Netcode BootStrap Usage Pattern
 This provides you with an "out of the box" project template to get started with [Netcode for GameObjects v1.0](https://github.com/Unity-Technologies/com.unity.netcode.gameobjects).  
 ## About The Bootstrap Usage Pattern
 With unity there are two different scene loading "modes":
@@ -102,7 +102,113 @@ Looking at the above screenshot of the `MainMenu` scene's `New Session` button, 
 And with that...we switched between "scenes" without having to load a scene when the button is clicked or unload a scene if we want to bring another "scene into view".
 This is one, of several, benefits that comes with using a Bootstrap usage pattern (and this project template). You can even "pre-design" your scene flows without having to have all content populated within the scenes, and as you add content to scenes it is relatively easy to determine "does this scene need to have a network session (i.e. be synchronized by the server) or not?" and it simplifies the loading and unloading of scenes to the point where you don't even have to write any code to do this!
 
-_(More To Come As Time Permits)_
+
+## UI Buttons
+Included in the project template, there are 3 types of buttons:
+- GenericButtonScript: All user interface buttons are all derrived from the `GenericButtonScript`. This provides the fundamental button mechanics that will be extended in the next two buttons. Both buttons in the `MainMenu` scene asset include a `GenericButtonScript` component.
+- SessionModeButton: Any button with this component provides extended properties used to start or join a network session when clicked.
+- NetcodeButton: Any button with this component provides extended properties used during a network session. This can be used to control certain events on other clients, respond to client input, and can provide you with the optoin determinng whether the button will be visible to a client, server, or both.
+
+### Naming Buttons
+All of the buttons share a common useful feature that helps expedite creating a new button instance.<br/>
+![image](https://user-images.githubusercontent.com/73188597/180668846-b9e7ed2c-7ffd-420e-8ddc-4cbf9292ab1e.png)<br/>
+If you look in the prefab folder, you will see a `GenericButton` prefab.  As a temporary example of how naming works and with the `MainMenu` scene open, drag and drop the `GenericButton` into the `MainMenu` scene and then place it under the `MainMenuCanvas`. Change its `RectTransform` 'X' and 'Y' properties to 0 and 90 like in the screenshot below:<br/>
+![image](https://user-images.githubusercontent.com/73188597/180669007-d605bad7-49c2-443c-99ae-90e43993b5cd.png)<br/>
+Now, right click on the newly created `GenericButton` prefab instance and rename it to "Test Button" (include the space). Once you are done, focus in on the button and you will notice the button text has changed to the name of the button.<br/>
+![image](https://user-images.githubusercontent.com/73188597/180669091-a6adc6a4-951e-4f5b-a60e-861fb921155f.png)<br/>
+This is just a "mini-time saver" feature that allows you to skip the typical last step of having to then set the visual name of the button in the child `Text` object of the button. _You can delete this new button if you want now._
+
+### GenericButtonScript
+![image](https://user-images.githubusercontent.com/73188597/180668391-54b1d234-b4e6-4649-9a3b-c6166fbcdbf7.png)<br/>
+Looking at the `GenericButtonScript` properties of the "ExitSample" button within the the `MainMenu` scene, we can see the two properties are checked:
+- Auto Register: When checked, this automatically registers with the existing `Button` component's `OnClick` `UnityAction`.
+- Exit Application: When checked, this will exit the application when the button is clicked.<br/>
+
+![image](https://user-images.githubusercontent.com/73188597/180671936-22878bd0-a237-4014-b33d-693d61a96250.png)
+Looking at the `Button` properties of the "New Session" button, you will notice the "Exit Application" property is unchecked (we don't want to do this when we click it), and then we just use the button component's `OnClick` to handle disabling the `MainMenu` associated `GameObject`s and enabling the `SessionMode` associated `GameObjects`.
+
+### SessionModeButton
+Not only does this button start the `NetworkManager` instance in a specific mode (server, host, or client), it also provides an example of how to create a "conditional" button that will perform a different set of sript logic based on the settings of the component's properties. Open the `SessionMenu` scene and select the "Start Host" button to view the `SessionModeButton` properities in the inspector view:<br/>
+![image](https://user-images.githubusercontent.com/73188597/180669716-5007ef95-a2ab-4277-8d6f-c90b9b811453.png)<br/>
+- Session Mode: Determines what "session mode" the button click action will start and it is currently set to "Host".
+- On Session Mode Action: Provides an example of how you can introduce your own `UnityEvent` action that will use your "conditional setting", in this case "Session Mode", and will then execute logic based on the condition set (i.e. host for this example).  
+
+Open the [`SessionModeButton`](https://github.com/NoelStephensUnity/Netcode-For-GameObjects-BootStrap-Pattern/blob/main/Assets/Scripts/SessionModeButton.cs) in your preferred IDE or refer to the below script:
+```csharp
+public class SessionModeButton : GenericButtonScript
+{
+public enum SessionModes
+{
+    Client,
+    Host,
+    Server,
+    None
+}
+public delegate bool StartSessionModeDelegateHandler();
+[Tooltip("Will start a specific session mode or if set to None will act like a normal button.")]
+public SessionModes SessionMode;
+
+public UnityEvent<SessionModes> OnSessionModeAction;
+private Dictionary<SessionModes, StartSessionModeDelegateHandler> SessionModeActions;
+
+protected override void OnButtonClicked()
+{
+    if (CanInvokeSessioinModeAction())
+    {
+        if (SessionModeActions == null)
+        {
+            InitializeSessionModeActions();
+        }
+        InvokeSessionModeAction();
+    }
+}
+
+protected bool CanInvokeSessioinModeAction()
+{
+    return NetworkManager.Singleton && (SessionMode == SessionModes.None ||
+        (!NetworkManager.Singleton.IsListening && SessionMode != SessionModes.None));
+}
+
+private void InvokeSessionModeAction()
+{
+    if (NetworkManager.Singleton != null)
+    {
+        if (SessionMode != SessionModes.None && !NetworkManager.Singleton.IsListening)
+        {
+            SessionModeActions[SessionMode].Invoke();
+            NetworkManager.Singleton.SceneManager.SetClientSynchronizationMode(UnityEngine.SceneManagement.LoadSceneMode.Additive);
+            NetworkManager.Singleton.SceneManager.DisableValidationWarnings(true);
+        }
+        OnSessionModeAction.Invoke(SessionMode);
+    }
+}
+
+private void InitializeSessionModeActions()
+{
+    SessionModeActions = new Dictionary<SessionModes, StartSessionModeDelegateHandler>();
+    SessionModeActions.Add(SessionModes.Client, NetworkManager.Singleton.StartClient);
+    SessionModeActions.Add(SessionModes.Host, NetworkManager.Singleton.StartHost);
+    SessionModeActions.Add(SessionModes.Server, NetworkManager.Singleton.StartServer);
+}
+```
+The `InitializeSessiionModeActions` ceates a simple `Dictionary` that is keyed off of the different `SessionModeButton.SessionModes` types and each type's `Value` is set to a `StartSessionModeDelegateHandler`. Of course, you can use this basic approach to create "multi-conditional" actions where you might require more than one configured property. Using this approach can help greatly decrease content creation time as your project evovles.
+
+### NetcodeButton
+This button follows the same "conditional button" pattern that the `SessionModeButton` does, with the exception that it is "netcode aware".<br/>
+_Netcode Aware: A component that is aware of an existing Netcode for GameObjects network session._
+Opening the `HeadsUpDisplay` scene and selecting the "Hide Client HUD", you will see the following properties in the inspector view:<br/>
+![image](https://user-images.githubusercontent.com/73188597/180671340-f95650b1-5a6c-40e2-b99b-13943eb6d160.png)<br/>
+The condition for this button is whether you are:
+- ServerAndClient: Visible and invoked on both the server and client (default)
+- ServerOnly: Only visible and invoked on the server.
+- ClientOnly: Only visible and invoked on the client.
+You also will see the `NetcodeButton.OnNetcodeButtonAction` `UnityEvent` property that you can use to invoke whichever method of another component you like. For this example, it sets the `HUDText` `GameObject` to be inactive.
+
+These three types of buttons provide fundamental building block functionality that can be expanded upon to create almost any kind of conditional button that you might require when working on your project.<br/>
+_Note: You can always use the `Button` component's `OnClick` to perform any actions that will always be invoked under all conditions._
+
+
+_(More Components and Content To Come As Time Permits)_
 
 
 
