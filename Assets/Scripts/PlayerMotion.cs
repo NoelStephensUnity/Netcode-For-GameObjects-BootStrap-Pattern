@@ -1,9 +1,9 @@
 using UnityEngine;
-using Unity.Netcode;
+using Unity.Netcode.Components;
 
 namespace NetcodeForGameObjects.SceneManagement.GoldenPath
 {
-    public class PlayerMotion : NetworkBehaviour
+    public class PlayerMotion : NetworkTransform
     {
         [Range(1.0f, 20.0f)]
         public float Radius = 10.0f;
@@ -11,18 +11,27 @@ namespace NetcodeForGameObjects.SceneManagement.GoldenPath
         [Range(1.0f, 30.0f)]
         public float Speed = 5.0f;
 
+        [Tooltip("When set to true the player uses owner authoritative transform updates.")]
+        public bool OwnerAuthoritative;
+
         private float m_CurrentPi;
-        private bool m_CanMove;
         private float m_Increment = 0.25f;
         private float m_ClockWise = 1.0f;
         private Rigidbody m_RigidBody;
 
+        protected override bool OnIsServerAuthoritative()
+        {
+            return OwnerAuthoritative;
+        }
+
         public override void OnNetworkSpawn()
         {
+            // Always invoked base when deriving from NetworkTransform
+            base.OnNetworkSpawn();
+
             m_RigidBody = GetComponent<Rigidbody>();
-            if (IsServer)
+            if (CanCommitToTransform)
             {
-                m_CanMove = true;
                 m_CurrentPi = Random.Range(-Mathf.PI, Mathf.PI);
                 m_ClockWise = Random.Range(-1.0f, 1.0f);
                 m_ClockWise = m_ClockWise / Mathf.Abs(m_ClockWise);
@@ -31,15 +40,11 @@ namespace NetcodeForGameObjects.SceneManagement.GoldenPath
                     Radius += Random.Range(-2.0f, 2.0f);
                 }
             }
-            else
-            {
-                m_RigidBody.isKinematic = true;
-            }
         }
 
         private void FixedUpdate()
         {
-            if (IsServer && m_CanMove)
+            if (IsSpawned && CanCommitToTransform)
             {
                 m_CurrentPi += m_ClockWise * (Speed * m_Increment * Time.fixedDeltaTime);
                 var offset = new Vector3(Radius * Mathf.Cos(m_CurrentPi), transform.position.y, Radius * Mathf.Sin(m_CurrentPi));

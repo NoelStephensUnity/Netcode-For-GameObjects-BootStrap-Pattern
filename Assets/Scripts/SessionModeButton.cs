@@ -2,11 +2,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
 
 namespace NetcodeForGameObjects.SceneManagement.GoldenPath
 {
     public class SessionModeButton : GenericButtonScript
     {
+        public NumericField IPAddress;
+        public NumericField Port;
+
         public enum SessionModes
         {
             Client,
@@ -45,7 +49,11 @@ namespace NetcodeForGameObjects.SceneManagement.GoldenPath
             {
                 if (SessionMode != SessionModes.None && !NetworkManager.Singleton.IsListening)
                 {
-                    SessionModeActions[SessionMode].Invoke();
+                    if (!SessionModeActions[SessionMode].Invoke())
+                    {
+                        Debug.LogWarning($"Failed to start {SessionMode}!");
+                        return;
+                    }
                     NetworkManager.Singleton.SceneManager.SetClientSynchronizationMode(UnityEngine.SceneManagement.LoadSceneMode.Additive);
                     NetworkManager.Singleton.SceneManager.DisableValidationWarnings(true);
                 }
@@ -56,9 +64,33 @@ namespace NetcodeForGameObjects.SceneManagement.GoldenPath
         private void InitializeSessionModeActions()
         {
             SessionModeActions = new Dictionary<SessionModes, StartSessionModeDelegateHandler>();
-            SessionModeActions.Add(SessionModes.Client, NetworkManager.Singleton.StartClient);
-            SessionModeActions.Add(SessionModes.Host, NetworkManager.Singleton.StartHost);
-            SessionModeActions.Add(SessionModes.Server, NetworkManager.Singleton.StartServer);
+            SessionModeActions.Add(SessionModes.Client, StartClient);
+            SessionModeActions.Add(SessionModes.Host, StartHost);
+            SessionModeActions.Add(SessionModes.Server, StartServer);
+        }
+
+        private void SetConnectionInfo()
+        {
+            var unityTransport = (UnityTransport)NetworkManager.Singleton.NetworkConfig.NetworkTransport;
+            unityTransport.SetConnectionData(IPAddress.IPAddress, Port.Port, IPAddress.IPAddress);
+        }
+
+        private bool StartClient()
+        {
+            SetConnectionInfo();
+            return NetworkManager.Singleton.StartClient();
+        }
+
+        private bool StartServer()
+        {
+            SetConnectionInfo();
+            return NetworkManager.Singleton.StartServer();
+        }
+
+        private bool StartHost()
+        {
+            SetConnectionInfo();
+            return NetworkManager .Singleton.StartHost();
         }
     }
 }
