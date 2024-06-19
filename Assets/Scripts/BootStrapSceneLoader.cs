@@ -1,7 +1,6 @@
 #if !UNITY_EDITOR
 using System;
 #else
-using NUnit.Framework;
 using System.Linq;
 using Unity.Netcode;
 using UnityEditor;
