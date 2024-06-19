@@ -1,5 +1,5 @@
 # Netcode BootStrap Usage Pattern
-This provides you with an "out of the box" project template to get started with [Netcode for GameObjects v1.7.1](https://github.com/Unity-Technologies/com.unity.netcode.gameobjects).  
+This provides you with an "out of the box" project template to get started with [Netcode for GameObjects](https://github.com/Unity-Technologies/com.unity.netcode.gameobjects).  
 ## About The Bootstrap Usage Pattern
 With unity there are two different scene loading "modes":
 - Single: This is when you use LoadSceneMode.Single mode to load a scene.  
