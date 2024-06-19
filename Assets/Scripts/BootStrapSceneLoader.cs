@@ -1,11 +1,51 @@
 #if !UNITY_EDITOR
 using System;
+#else
+using UnityEditor;
 #endif
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+
 namespace NetcodeForGameObjects.SceneManagement.GoldenPath
 {
+#if UNITY_EDITOR
+
+    /// <summary>
+    /// The custom editor for the <see cref="AsteroidObject"/> component.
+    /// </summary>
+    [CustomEditor(typeof(BootStrapSceneLoader), true)]
+    public class BootStrapSceneLoaderEditor : Editor
+    {
+        private SerializedProperty m_SetResolution;
+        private SerializedProperty m_Fullscreen;
+        private SerializedProperty m_HorizontalResolution;
+        private SerializedProperty m_VerticalResolution;
+
+        public virtual void OnEnable()
+        {
+            m_SetResolution = serializedObject.FindProperty(nameof(BootStrapSceneLoader.SetResolution));
+            m_Fullscreen = serializedObject.FindProperty(nameof(BootStrapSceneLoader.Fullscreen));
+            m_HorizontalResolution = serializedObject.FindProperty(nameof(BootStrapSceneLoader.HorizontalResolution));
+            m_VerticalResolution = serializedObject.FindProperty(nameof(BootStrapSceneLoader.VerticalResolution));
+        }
+
+        public override void OnInspectorGUI()
+        {
+            EditorGUILayout.PropertyField(m_SetResolution);
+            var bootStrapSceneLoader = target as BootStrapSceneLoader;
+            if (bootStrapSceneLoader.SetResolution)
+            {
+                EditorGUILayout.PropertyField(m_Fullscreen);
+                EditorGUILayout.PropertyField(m_HorizontalResolution);
+                EditorGUILayout.PropertyField(m_VerticalResolution);
+            }
+            serializedObject.ApplyModifiedProperties();
+        }
+    }
+#endif
+
+
     public class BootStrapSceneLoader : MonoBehaviour
     {
 #if UNITY_EDITOR
@@ -25,6 +65,12 @@ namespace NetcodeForGameObjects.SceneManagement.GoldenPath
             }
         }
 #endif
+        [Tooltip("When enabled, you can override your project's current resoltuion settings (for development purposes)")]
+        public bool SetResolution = true;
+
+        [Tooltip("Determines if the application will render in fullscreen or windowed mode")]
+        public bool Fullscreen;
+
         [Tooltip("Horizontal window resolution size")]
         public int HorizontalResolution = 1280;
 
@@ -35,7 +81,10 @@ namespace NetcodeForGameObjects.SceneManagement.GoldenPath
 
         private void Awake()
         {
-            Screen.SetResolution(HorizontalResolution, VerticalResolution, false);
+            if (SetResolution)
+            {
+                Screen.SetResolution(HorizontalResolution, VerticalResolution, Fullscreen);
+            }
         }
 
         // Load the first scene when this component starts
