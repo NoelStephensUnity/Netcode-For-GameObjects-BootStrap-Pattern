@@ -1,6 +1,9 @@
 #if !UNITY_EDITOR
 using System;
 #else
+using NUnit.Framework;
+using System.Linq;
+using Unity.Netcode;
 using UnityEditor;
 #endif
 using UnityEngine;
@@ -43,8 +46,22 @@ namespace NetcodeForGameObjects.SceneManagement.GoldenPath
             serializedObject.ApplyModifiedProperties();
         }
     }
-#endif
 
+    /// <summary>
+    /// Gets any NetworkManager instances loaded while in edit mode.
+    /// This is used later to clear out the instances.
+    /// </summary>
+    static class CatchEnterPlayMode
+    {
+        static public System.Collections.Generic.List<NetworkManager> Managers;
+        [InitializeOnEnterPlayMode]
+        static public void OnEnterPlayMode()
+        {
+            Managers = Object.FindObjectsByType<NetworkManager>(FindObjectsSortMode.None).ToList();
+        }
+    }
+
+#endif
 
     public class BootStrapSceneLoader : MonoBehaviour
     {
@@ -57,8 +74,39 @@ namespace NetcodeForGameObjects.SceneManagement.GoldenPath
         [RuntimeInitializeOnLoadMethod]
         private static void OnFirstLoad()
         {
+            SceneManager.sceneLoaded += OnFirstSceneLoaded;
             Debug.Log($"Bootstrap scene is Loading...");
             SceneManager.LoadScene(0);
+        }
+
+        /// <summary>
+        /// Handles clearing out any other NetworkManagers that were loaded in the editor
+        /// when not in play mode.
+        /// </summary>
+        private static void OnFirstSceneLoaded(Scene scene, LoadSceneMode sceneLoadMode)
+        {
+            if (sceneLoadMode != LoadSceneMode.Single)
+            {
+                return;
+            }
+            SceneManager.sceneLoaded -= OnFirstSceneLoaded;
+
+            // Get the total list of NetworkManager instances
+            var allManagers = Object.FindObjectsByType<NetworkManager>(FindObjectsSortMode.None).ToList();
+
+            // Anything in the pre-existing list when we entered play mode should be destroyed
+            foreach (var netMan in allManagers)
+            {
+                if (CatchEnterPlayMode.Managers.Contains(netMan))
+                {
+                    DestroyImmediate(netMan.gameObject);
+                }
+                else
+                {
+                    // If not in the list, then we set this as the singleton/primary NetworkManager
+                    netMan.SetSingleton();
+                }
+            }
         }
 #endif
         [Tooltip("When enabled, you can override your project's current resoltuion settings (for development purposes)")]
