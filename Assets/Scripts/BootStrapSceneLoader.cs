@@ -17,12 +17,8 @@ namespace NetcodeForGameObjects.SceneManagement.GoldenPath
         [RuntimeInitializeOnLoadMethod]
         private static void OnFirstLoad()
         {
-            var activeScene = SceneManager.GetActiveScene();
-            if (activeScene.buildIndex != 0)
-            {
-                Debug.Log($"Bootstrap scene is Loading...");
-                SceneManager.LoadScene(0);
-            }
+            Debug.Log($"Bootstrap scene is Loading...");
+            SceneManager.LoadScene(0);
         }
 #endif
         [Tooltip("Horizontal window resolution size")]
