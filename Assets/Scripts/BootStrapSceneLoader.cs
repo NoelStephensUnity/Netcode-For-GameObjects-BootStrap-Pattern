@@ -23,6 +23,7 @@ namespace NetcodeForGameObjects.SceneManagement.GoldenPath
         private SerializedProperty m_Fullscreen;
         private SerializedProperty m_HorizontalResolution;
         private SerializedProperty m_VerticalResolution;
+        private SerializedProperty m_FirstSceneToLoad;
 
         public virtual void OnEnable()
         {
@@ -30,6 +31,7 @@ namespace NetcodeForGameObjects.SceneManagement.GoldenPath
             m_Fullscreen = serializedObject.FindProperty(nameof(BootStrapSceneLoader.Fullscreen));
             m_HorizontalResolution = serializedObject.FindProperty(nameof(BootStrapSceneLoader.HorizontalResolution));
             m_VerticalResolution = serializedObject.FindProperty(nameof(BootStrapSceneLoader.VerticalResolution));
+            m_FirstSceneToLoad = serializedObject.FindProperty(nameof(BootStrapSceneLoader.FirstSceneToLoad));
         }
 
         public override void OnInspectorGUI()
@@ -42,6 +44,7 @@ namespace NetcodeForGameObjects.SceneManagement.GoldenPath
                 EditorGUILayout.PropertyField(m_HorizontalResolution);
                 EditorGUILayout.PropertyField(m_VerticalResolution);
             }
+            EditorGUILayout.PropertyField(m_FirstSceneToLoad);
             serializedObject.ApplyModifiedProperties();
         }
     }
